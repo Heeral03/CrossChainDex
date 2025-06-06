@@ -22,6 +22,13 @@ const IntentForm = () => {
       targetChain,
       orderType
     });
+  setSellToken('');
+  setBuyToken('');
+  setSellAmount('');
+  setMinBuyAmount('');
+  setSourceChain('');
+  setTargetChain('');
+  setOrderType('Limit Buy'); 
   };
 
   return (
