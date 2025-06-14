@@ -71,6 +71,7 @@ const LiveIntents = ({ tokenMap = fallbackSymbols }) => {
           value={filterToken}
           onChange={(e) => setFilterToken(e.target.value)}
           style={inputStyle}
+          className='text-green-600'
         />
         <input
           type="text"
@@ -78,6 +79,7 @@ const LiveIntents = ({ tokenMap = fallbackSymbols }) => {
           value={filterChain}
           onChange={(e) => setFilterChain(e.target.value)}
           style={inputStyle}
+          className='text-green-600'
         />
         <input
           type="text"
@@ -85,6 +87,7 @@ const LiveIntents = ({ tokenMap = fallbackSymbols }) => {
           value={filterId}
           onChange={(e) => setFilterId(e.target.value)}
           style={inputStyle}
+          className='text-green-600'
         />
       </div>
 
