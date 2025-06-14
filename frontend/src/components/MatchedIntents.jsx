@@ -8,7 +8,7 @@ const tokenSymbols = {
 
 const getExplorerLink = (chainId, txHash) => {
   if (chainId === 11155111) return `https://sepolia.etherscan.io/tx/${txHash}`;
-  if (chainId === 80001) return `https://mumbai.polygonscan.com/tx/${txHash}`;
+  if (chainId === 80002) return `https://amoy.polygonscan.com/tx/${txHash}`;
   return `#`;
 };
 
