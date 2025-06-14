@@ -33,19 +33,19 @@ const WalletConnect = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
+    <div className="flex p-8 shadow-md shadow-green-500 flex-col items-center justify-center p-4">
      
 
       {!isConnected ? (
         <button
           onClick={connectWallet}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded"
+          className="bg-green-700 hover:bg-green-900 text-white font-medium py-3 px-8 rounded"
         >
           Connect MetaMask
         </button>
       ) : (
-        <div className="text-green-600 font-mono">
-          <p className="mb-2">✅ Connected</p>
+        <div className="text-green-600  font-mono">
+          <p >✅ Connected</p>
           <p className="break-all text-sm">Address: {account}</p>
         </div>
       )}

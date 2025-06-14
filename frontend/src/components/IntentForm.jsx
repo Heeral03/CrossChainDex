@@ -4,7 +4,8 @@ import { ethers } from 'ethers';
 const erc20Abi = [
   "function approve(address spender, uint256 amount) public returns (bool)",
   "function allowance(address owner, address spender) public view returns (uint256)",
-  "function balanceOf(address owner) public view returns (uint256)"
+  "function balanceOf(address owner) public view returns (uint256)",
+  "function mint(address to, uint256 amount) public"  
 ];
 
 const IntentForm = () => {
@@ -18,8 +19,8 @@ const IntentForm = () => {
 
   const tokenAddresses = {
     Sepolia: {
-      USDC: "0x5273cE0CFC959a12EDC5594eFD588034199D4f2D",
-      WETH: "0xAa49045062B3216CF5Cf41A36Ec17FdA7Ec61b34",
+      USDC: "0x447dB80B9629A84aeFcad6c3fa6C0359d73BF796",
+      WETH: "0x8a1FA303F13beb1b6bd34FDC8E42881966733927",
     }
   };
 
@@ -48,14 +49,22 @@ const IntentForm = () => {
 
       const tokenContract = new ethers.Contract(sellTokenAddress, erc20Abi, signer);
 
-      // 🔍 Check balance
+      // 🔍 Check balance and mint if insufficient
       const balance = await tokenContract.balanceOf(userAddress);
       if (balance < parsedAmount) {
-        alert(`❌ Insufficient balance: You only have ${ethers.formatUnits(balance, 18)} ${sellToken}`);
-        return;
+        console.log(`Minting ${sellAmount} ${sellToken}...`);
+        try {
+          const mintTx = await tokenContract.mint(userAddress, parsedAmount);
+          await mintTx.wait();
+          console.log(`Minted ${sellAmount} ${sellToken}`);
+        } catch (mintErr) {
+          console.error("❌ Mint failed:", mintErr);
+          alert("Mint failed: " + mintErr.message);
+          return;
+        }
       }
 
-      // 🔐 Check and approve if needed
+      // 🔐 Approve tokens if needed
       const allowance = await tokenContract.allowance(userAddress, cowMatcherAddress);
       if (allowance < parsedAmount) {
         console.log("🔐 Not enough allowance. Requesting approval...");
@@ -66,7 +75,7 @@ const IntentForm = () => {
         console.log("✅ Sufficient allowance already granted");
       }
 
-      // 🚀 Submit intent
+      // 🚀 Submit intent to backend
       const response = await fetch("http://localhost:3001/api/submit-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -92,19 +101,40 @@ const IntentForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={formStyle}>
+   <form onSubmit={handleSubmit} style={formStyle}>
+  <div style={gridContainerStyle}>
+    <div style={gridItemStyle}>
       <Dropdown label="Sell Token" value={sellToken} setValue={setSellToken} options={["USDC", "WETH"]} />
+    </div>
+    <div style={gridItemStyle}>
       <Dropdown label="Buy Token" value={buyToken} setValue={setBuyToken} options={["USDC", "WETH"]} />
+    </div>
+    <div style={gridItemStyle}>
       <Input label="Sell Amount" value={sellAmount} setValue={setSellAmount} />
+    </div>
+    <div style={gridItemStyle}>
       <Input label="Min Buy Amount" value={minBuyAmount} setValue={setMinBuyAmount} />
+    </div>
+    <div style={gridItemStyle}>
       <Dropdown label="Source Chain" value={sourceChain} setValue={setSourceChain} options={["Sepolia"]} />
+    </div>
+    <div style={gridItemStyle}>
       <Dropdown label="Target Chain" value={targetChain} setValue={setTargetChain} options={["Sepolia"]} />
-      <Dropdown label="Order Type" value={orderType} setValue={setOrderType} options={["Limit Buy", "Limit Sell"]} />
-      <button type="submit" style={buttonStyle}>Submit Intent</button>
-    </form>
+    </div>
+  </div>
+
+  {/* Full-width row for Order Type */}
+  <div style={{ marginBottom: '1rem' }}>
+    <Dropdown label="Order Type" value={orderType} setValue={setOrderType} options={["Limit Buy", "Limit Sell"]} />
+  </div>
+
+  <button type="submit" style={buttonStyle}>Submit Intent</button>
+</form>
+
   );
 };
 
+// Reusable components
 const Dropdown = ({ label, value, setValue, options }) => (
   <div style={{ marginBottom: '1rem' }}>
     <label>{label}:</label>
@@ -122,34 +152,50 @@ const Input = ({ label, value, setValue }) => (
   </div>
 );
 
+// Styles
 const formStyle = {
   backgroundColor: '#000',
   color: '#fff',
-  maxWidth: '500px',
-  margin: '0 auto',
+  maxWidth: '600px',
+  marginTop: '80px',
+  margin: '60px auto',
   border: '2px solid #00ff00',
   padding: '0.8rem',
-  borderRadius: '8px'
+  borderRadius: '8px',
+  boxShadow: '0 0 15px #00ff00' 
 };
-
 const selectStyle = {
   width: '100%',
   padding: '0.4rem',
   borderRadius: '4px',
-  backgroundColor: '#fff',
-  color: '#000'
+  border: '1px solid #00ff00',
+  backgroundColor: '#000',
+  color: 'green'
 };
 
 const inputStyle = {
   width: '100%',
   padding: '0.4rem',
   borderRadius: '4px',
-  backgroundColor: '#fff',
-  color: '#000'
+  border: '1px solid #00ff00',
+  backgroundColor: 'black',
+  color: 'green'
 };
+const gridContainerStyle = {
+  display: 'grid',
+  gridTemplateColumns: '1fr 1fr',
+  gap: '1rem',
+  marginBottom: '1rem',
+};
+
+const gridItemStyle = {
+  width: '100%',
+};
+
 
 const buttonStyle = {
   width: '100%',
+  height: '40px',
   borderRadius: '4px',
   backgroundColor: 'green',
   color: '#fff',

@@ -111,7 +111,7 @@ const matchCard = {
   backgroundColor: "#1a1a1a",
   padding: "1rem",
   borderRadius: "8px",
-  border: "1px solid #333",
+  border: "2px solid #00ff00",
 };
 
 const badgeStyle = {

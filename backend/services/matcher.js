@@ -88,6 +88,10 @@ async function matchIntentsIfCompatible({ a, b }) {
     return { success: false };
   }
 }
+function matchIntents(intentPool) {
+  const matches = getAllMatches(intentPool);
+  return matches.length > 0 ? matches[0] : null;
+}
 
 
 // ✅ Exports
@@ -95,4 +99,5 @@ module.exports = {
   findMatchForIntent,
   getAllMatches,
   matchIntentsIfCompatible,
+  matchIntents
 };

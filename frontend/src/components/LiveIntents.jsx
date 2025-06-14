@@ -62,7 +62,7 @@ const LiveIntents = ({ tokenMap = fallbackSymbols }) => {
 
   return (
     <div style={containerStyle}>
-      <h2>📊 Live Intents</h2>
+      <h2 className='text-xl'>Live Intents</h2>
 
       <div style={filterContainer}>
         <input
@@ -179,9 +179,11 @@ const filterContainer = {
 const inputStyle = {
   padding: '0.6rem',
   borderRadius: '6px',
-  border: '1px solid #ccc',
+  border: '2px solid #00ff00',
   width: '100%',
   maxWidth: '250px',
+  backgroundColor: 'black',
+  boxShadow: '0 0 6px #00ff00', 
   fontSize: '0.95rem',
 };
 
